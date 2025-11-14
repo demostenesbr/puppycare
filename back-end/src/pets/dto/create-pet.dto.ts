@@ -1,36 +1,22 @@
-import { IsString, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsOptional, IsInt, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreatePetDto {
-  @ApiProperty({ description: 'ID do cliente proprietário' })
-  @IsString()
-  cliente_id: string;
+  @ApiProperty({ description: 'ID_CLIENTE (inteiro) proprietário do pet' })
+  @IsInt()
+  ID_CLIENTE: number;
 
-  @ApiProperty({ description: 'Nome do pet' })
+  @ApiProperty({ description: 'NOME do pet' })
   @IsString()
-  nome: string;
+  NOME: string;
 
-  @ApiProperty({ description: 'Espécie do pet (ex: cachorro, gato)' })
-  @IsString()
-  especie: string;
-
-  @ApiPropertyOptional({ description: 'Raça do pet' })
+  @ApiPropertyOptional({ description: 'RACA do pet' })
   @IsOptional()
   @IsString()
-  raca?: string;
+  RACA?: string;
 
-  @ApiPropertyOptional({ description: 'Porte do pet (ex: pequeno, médio, grande)' })
-  @IsOptional()
-  @IsString()
-  porte?: string;
-
-  @ApiPropertyOptional({ description: 'Data de nascimento do pet' })
+  @ApiPropertyOptional({ description: 'DATA_NASC do pet (ISO string)' })
   @IsOptional()
   @IsDateString()
-  nascimento?: Date;
-
-  @ApiPropertyOptional({ description: 'Observações sobre o pet' })
-  @IsOptional()
-  @IsString()
-  observacoes?: string;
+  DATA_NASC?: string;
 }

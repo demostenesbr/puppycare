@@ -14,107 +14,125 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Clientes {
-  id                  String           @id @default(uuid())
-  nome                String
-  email               String?          @unique
-  telefone            String
-  cpf                 String?          @unique
-  endereco_logradouro String
-  numero              String
-  bairro              String?
-  cidade              String
-  uf                  String
-  cep                 String
-  latitude            Float?
-  longitude           Float?
-  whatsapp_opt_in     Boolean          @default(false)
-  pets                Pets[]
-  ordens              OrdensServicos[]
-  mensagens           Mensagens[]
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+model ATENDIMENTOS {
+  ID_ATENDIMENTO Int                   @id @default(autoincrement())
+  ID_CLIENTE     Int
+  CLIENTE        CLIENTES              @relation(fields: [ID_CLIENTE], references: [ID_CLIENTE])
+  ID_PET         Int
+  PET            PETS                  @relation(fields: [ID_PET], references: [ID_PET])
+  ID_SERVICO     Int
+  SERVICO        SERVICOS              @relation(fields: [ID_SERVICO], references: [ID_SERVICO])
+  VALOR_COBRADO  Decimal
+  TIPO           String                @db.VarChar(50)
+  NOTAS          String?
+  IMAGENS        ATENDIMENTO_IMAGENS[] // um atendimento pode ter várias imagens (back-relation para ATENDIMENTO_IMAGENS.ATENDIMENTO)
+  // --- Campos de rastreamento com prioridade para uso offline ---
+  PUBLIC_ID   String    @unique @default(uuid())
+  CREATED_AT  DateTime  @default(now())
+  UPDATED_AT  DateTime  @updatedAt
+  DELETED_AT  DateTime?
+  VERSION     Int       @default(1)
+
+  @@index([UPDATED_AT])
 }
 
-model Pets {
-  id          String           @id @default(uuid())
-  cliente_id  String
-  cliente     Clientes         @relation(fields: [cliente_id], references: [id])
-  nome        String
-  especie     String
-  raca        String?
-  porte       String?
-  nascimento  DateTime?
-  observacoes String?
-  ordens      OrdensServicos[]
+model ATENDIMENTO_IMAGENS {
+  ID_IMAGEM      Int          @id @default(autoincrement())
+  ID_ATENDIMENTO Int
+  ATENDIMENTO    ATENDIMENTOS @relation(fields: [ID_ATENDIMENTO], references: [ID_ATENDIMENTO])
+  CAMINHO_IMAGEM String       @db.VarChar(255)
+  DATA_UPLOAD    DateTime     @default(now())
+  // --- Campos de rastreamento com prioridade para uso offline ---
+  PUBLIC_ID   String    @unique @default(uuid())
+  CREATED_AT  DateTime  @default(now())
+  UPDATED_AT  DateTime  @updatedAt
+  DELETED_AT  DateTime?
+  VERSION     Int       @default(1)
+
+  @@index([UPDATED_AT])
 }
 
-model OrdensServicos {
-  id            String         @id @default(uuid())
-  cliente_id    String
-  pet_id        String
-  tipo          String
-  status        String         @default("agendado")
-  data_agendada DateTime
-  preco         Decimal?
-  observacoes   String?
-  clientes      Clientes       @relation(fields: [cliente_id], references: [id])
-  pet           Pets           @relation(fields: [pet_id], references: [id])
-  paradas       RotasParadas[]
-  statuses      Status[]
+model CLIENTES {
+  ID_CLIENTE   Int            @id @default(autoincrement())
+  NOME         String         @db.VarChar(100)
+  TELEFONE     String         @db.VarChar(20)
+  ENDERECO     String         @db.VarChar(255)
+  PETS         PETS[] // um cliente pode ter vários pets (back-relation para PETS.CLIENTE)
+  PACOTES      PACOTES[] // um cliente pode ter vários pacotes (back-relation para PACOTES.CLIENTE)
+  ATENDIMENTOS ATENDIMENTOS[] // um cliente pode ter vários atendimentos (back-relation para ATENDIMENTOS.CLIENTE)
+  // --- Campos de rastreamento com prioridade para uso offline ---
+  PUBLIC_ID   String    @unique @default(uuid())
+  CREATED_AT  DateTime  @default(now())
+  UPDATED_AT  DateTime  @updatedAt
+  DELETED_AT  DateTime?
+  VERSION     Int       @default(1)
+
+  @@index([UPDATED_AT])
 }
 
-model Rotas {
-  id                    String         @id @default(uuid())
-  data                  DateTime
-  tipo                  String // coleta ou entrega
-  status                String         @default("planejada")
-  motorista             String?
-  kilometragem_prevista Float?
-  tempo_previsto        Int? // em minutos
-  paradas               RotasParadas[]
+model PETS {
+  ID_PET       Int            @id @default(autoincrement())
+  NOME         String
+  RACA         String?
+  DATA_NASC    DateTime?
+  ID_CLIENTE   Int
+  CLIENTE      CLIENTES       @relation(fields: [ID_CLIENTE], references: [ID_CLIENTE])
+  ATENDIMENTOS ATENDIMENTOS[]
+  // --- Campos de rastreamento com prioridade para uso offline ---
+  PUBLIC_ID   String    @unique @default(uuid())
+  CREATED_AT  DateTime  @default(now())
+  UPDATED_AT  DateTime  @updatedAt
+  DELETED_AT  DateTime?
+  VERSION     Int       @default(1)
+
+  @@index([UPDATED_AT])
 }
 
-model RotasParadas {
-  id        String         @id @default(uuid())
-  rota_id   String
-  ordem_id  String
-  sequencia Int
-  latitude  Float
-  longitude Float
-  status    String         @default("pendente")
-  rota      Rotas          @relation(fields: [rota_id], references: [id])
-  ordem     OrdensServicos @relation(fields: [ordem_id], references: [id])
+model PACOTES {
+  ID_ASSINATURA Int      @id @default(autoincrement())
+  ID_CLIENTE    Int
+  CLIENTE       CLIENTES @relation(fields: [ID_CLIENTE], references: [ID_CLIENTE])
+  ID_SERVICO    Int
+  SERVICO       SERVICOS @relation(fields: [ID_SERVICO], references: [ID_SERVICO])
+  QTD_BANHOS    Int      @default(0)
+  // --- Campos de rastreamento com prioridade para uso offline ---
+  PUBLIC_ID   String    @unique @default(uuid())
+  CREATED_AT  DateTime  @default(now())
+  UPDATED_AT  DateTime  @updatedAt
+  DELETED_AT  DateTime?
+  VERSION     Int       @default(1)
+
+  @@index([UPDATED_AT])
 }
 
-model Mensagens {
-  id              String   @id @default(uuid())
-  cliente_id      String
-  canal           String // whatsapp
-  template        String?
-  conteudo        String
-  status          String   @default("pendente")
-  meta_message_id String?
-  erro            String?
-  clientes        Clientes @relation(fields: [cliente_id], references: [id])
-  createdAt       DateTime @default(now())
+model SERVICOS {
+  ID_SERVICO   Int            @id @default(autoincrement())
+  NOME         String         @db.VarChar(100)
+  DESCRICAO    String?
+  VALOR        Decimal
+  ATENDIMENTOS ATENDIMENTOS[] // um serviço pode ter vários atendimentos (back-relation para ATENDIMENTOS.SERVICO)
+  PACOTES      PACOTES[] // um serviço pode estar em vários pacotes (back-relation para PACOTES.SERVICO)
+  // --- Campos de rastreamento com prioridade para uso offline ---
+  PUBLIC_ID   String    @unique @default(uuid())
+  CREATED_AT  DateTime  @default(now())
+  UPDATED_AT  DateTime  @updatedAt
+  DELETED_AT  DateTime?
+  VERSION     Int       @default(1)
+
+  @@index([UPDATED_AT])
 }
 
-model Funcionarios {
-  id        String   @id @default(uuid())
-  nome      String
-  email     String   @unique
-  telefone  String
-  cargo     String
-  ativo     Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+model USUARIOS {
+  ID_USUARIO Int     @id @default(autoincrement())
+  NOME       String  @db.VarChar(100)
+  DESCRICAO  String?
+  SENHA_HASH String  @db.VarChar(255)
+  // --- Campos de rastreamento com prioridade para uso offline ---
+  PUBLIC_ID   String    @unique @default(uuid())
+  CREATED_AT  DateTime  @default(now())
+  UPDATED_AT  DateTime  @updatedAt
+  DELETED_AT  DateTime?
+  VERSION     Int       @default(1)
 
-model Status {
-  id        String   @id @default(uuid())
-  ordem_id  String
-  status    String
-  timestamp DateTime @default(now())
-  ordem     OrdensServicos @relation(fields: [ordem_id], references: [id])
+  @@index([UPDATED_AT])
 }

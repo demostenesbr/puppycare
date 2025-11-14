@@ -13,52 +13,32 @@ exports.CreatePetDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 class CreatePetDto {
-    cliente_id;
-    nome;
-    especie;
-    raca;
-    porte;
-    nascimento;
-    observacoes;
+    ID_CLIENTE;
+    NOME;
+    RACA;
+    DATA_NASC;
 }
 exports.CreatePetDto = CreatePetDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'ID do cliente proprietário' }),
+    (0, swagger_1.ApiProperty)({ description: 'ID_CLIENTE (inteiro) proprietário do pet' }),
+    (0, class_validator_1.IsInt)(),
+    __metadata("design:type", Number)
+], CreatePetDto.prototype, "ID_CLIENTE", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'NOME do pet' }),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreatePetDto.prototype, "cliente_id", void 0);
+], CreatePetDto.prototype, "NOME", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Nome do pet' }),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreatePetDto.prototype, "nome", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Espécie do pet (ex: cachorro, gato)' }),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreatePetDto.prototype, "especie", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Raça do pet' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'RACA do pet' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreatePetDto.prototype, "raca", void 0);
+], CreatePetDto.prototype, "RACA", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Porte do pet (ex: pequeno, médio, grande)' }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreatePetDto.prototype, "porte", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Data de nascimento do pet' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'DATA_NASC do pet (ISO string)' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", Date)
-], CreatePetDto.prototype, "nascimento", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Observações sobre o pet' }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreatePetDto.prototype, "observacoes", void 0);
+], CreatePetDto.prototype, "DATA_NASC", void 0);
 //# sourceMappingURL=create-pet.dto.js.map

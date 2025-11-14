@@ -18,6 +18,7 @@ const swagger_1 = require("@nestjs/swagger");
 const pets_service_1 = require("./pets.service");
 const create_pet_dto_1 = require("./dto/create-pet.dto");
 const update_pet_dto_1 = require("./dto/update-pet.dto");
+const pet_sync_dto_1 = require("./dto/pet-sync.dto");
 let PetsController = class PetsController {
     petsService;
     constructor(petsService) {
@@ -37,6 +38,15 @@ let PetsController = class PetsController {
     }
     remove(id) {
         return this.petsService.remove(id);
+    }
+    getChanges(since) {
+        return this.petsService.getChanges(since);
+    }
+    batch(body) {
+        return this.petsService.batchUpsert(body);
+    }
+    softDeleteByPublicId(publicId) {
+        return this.petsService.softDeleteByPublicId(publicId);
     }
 };
 exports.PetsController = PetsController;
@@ -67,9 +77,9 @@ __decorate([
     (0, swagger_1.ApiParam)({ name: 'id', description: 'ID do pet' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Pet encontrado.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Pet não encontrado.' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], PetsController.prototype, "findOne", null);
 __decorate([
@@ -78,10 +88,10 @@ __decorate([
     (0, swagger_1.ApiParam)({ name: 'id', description: 'ID do pet' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Pet atualizado com sucesso.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Pet não encontrado.' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_pet_dto_1.UpdatePetDto]),
+    __metadata("design:paramtypes", [Number, update_pet_dto_1.UpdatePetDto]),
     __metadata("design:returntype", void 0)
 ], PetsController.prototype, "update", null);
 __decorate([
@@ -90,11 +100,38 @@ __decorate([
     (0, swagger_1.ApiParam)({ name: 'id', description: 'ID do pet' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Pet removido com sucesso.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Pet não encontrado.' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], PetsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Get)('changes'),
+    (0, swagger_1.ApiOperation)({ summary: 'Listar alterações de pets desde um timestamp' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Mudanças retornadas com sucesso.' }),
+    __param(0, (0, common_1.Query)('since')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], PetsController.prototype, "remove", null);
+], PetsController.prototype, "getChanges", null);
+__decorate([
+    (0, common_1.Post)('batch'),
+    (0, swagger_1.ApiOperation)({ summary: 'Aplicar lote de alterações de pets (upsert por PUBLIC_ID)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Resultados do processamento do lote.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [pet_sync_dto_1.PetSyncBatchRequestDto]),
+    __metadata("design:returntype", void 0)
+], PetsController.prototype, "batch", null);
+__decorate([
+    (0, common_1.Delete)('public/:publicId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Soft delete por PUBLIC_ID (marca DELETED_AT)' }),
+    (0, swagger_1.ApiParam)({ name: 'publicId', description: 'PUBLIC_ID do pet' }),
+    __param(0, (0, common_1.Param)('publicId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PetsController.prototype, "softDeleteByPublicId", null);
 exports.PetsController = PetsController = __decorate([
     (0, swagger_1.ApiTags)('pets'),
     (0, common_1.Controller)('pets'),

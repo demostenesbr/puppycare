@@ -1,115 +1,152 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
+import { PetSyncBatchRequestDto } from './dto/pet-sync.dto';
 export declare class PetsService {
     private prisma;
     constructor(prisma: PrismaService);
     create(createPetDto: CreatePetDto): Promise<{
-        id: string;
-        nome: string;
-        cliente_id: string;
-        especie: string;
-        raca: string | null;
-        porte: string | null;
-        nascimento: Date | null;
-        observacoes: string | null;
+        NOME: string;
+        PUBLIC_ID: string;
+        CREATED_AT: Date;
+        UPDATED_AT: Date;
+        DELETED_AT: Date | null;
+        VERSION: number;
+        ID_CLIENTE: number;
+        ID_PET: number;
+        RACA: string | null;
+        DATA_NASC: Date | null;
     }>;
     findAll(): Promise<({
-        ordens: {
-            id: string;
-            cliente_id: string;
-            observacoes: string | null;
-            pet_id: string;
-            tipo: string;
-            status: string;
-            data_agendada: Date;
-            preco: import("@prisma/client/runtime/library").Decimal | null;
+        ATENDIMENTOS: {
+            ID_SERVICO: number;
+            PUBLIC_ID: string;
+            CREATED_AT: Date;
+            UPDATED_AT: Date;
+            DELETED_AT: Date | null;
+            VERSION: number;
+            ID_CLIENTE: number;
+            ID_PET: number;
+            VALOR_COBRADO: import("@prisma/client/runtime/library").Decimal;
+            TIPO: string;
+            NOTAS: string | null;
+            ID_ATENDIMENTO: number;
         }[];
-        cliente: {
-            id: string;
-            email: string | null;
-            cpf: string | null;
-            nome: string;
-            telefone: string;
-            endereco_logradouro: string;
-            numero: string;
-            bairro: string | null;
-            cidade: string;
-            uf: string;
-            cep: string;
-            latitude: number | null;
-            longitude: number | null;
-            whatsapp_opt_in: boolean;
-            createdAt: Date;
-            updatedAt: Date;
+        CLIENTE: {
+            NOME: string;
+            PUBLIC_ID: string;
+            CREATED_AT: Date;
+            UPDATED_AT: Date;
+            DELETED_AT: Date | null;
+            VERSION: number;
+            ID_CLIENTE: number;
+            TELEFONE: string;
+            ENDERECO: string;
         };
     } & {
-        id: string;
-        nome: string;
-        cliente_id: string;
-        especie: string;
-        raca: string | null;
-        porte: string | null;
-        nascimento: Date | null;
-        observacoes: string | null;
+        NOME: string;
+        PUBLIC_ID: string;
+        CREATED_AT: Date;
+        UPDATED_AT: Date;
+        DELETED_AT: Date | null;
+        VERSION: number;
+        ID_CLIENTE: number;
+        ID_PET: number;
+        RACA: string | null;
+        DATA_NASC: Date | null;
     })[]>;
-    findOne(id: string): Promise<{
-        ordens: {
-            id: string;
-            cliente_id: string;
-            observacoes: string | null;
-            pet_id: string;
-            tipo: string;
-            status: string;
-            data_agendada: Date;
-            preco: import("@prisma/client/runtime/library").Decimal | null;
+    findOne(id: number): Promise<{
+        ATENDIMENTOS: {
+            ID_SERVICO: number;
+            PUBLIC_ID: string;
+            CREATED_AT: Date;
+            UPDATED_AT: Date;
+            DELETED_AT: Date | null;
+            VERSION: number;
+            ID_CLIENTE: number;
+            ID_PET: number;
+            VALOR_COBRADO: import("@prisma/client/runtime/library").Decimal;
+            TIPO: string;
+            NOTAS: string | null;
+            ID_ATENDIMENTO: number;
         }[];
-        cliente: {
-            id: string;
-            email: string | null;
-            cpf: string | null;
-            nome: string;
-            telefone: string;
-            endereco_logradouro: string;
-            numero: string;
-            bairro: string | null;
-            cidade: string;
-            uf: string;
-            cep: string;
-            latitude: number | null;
-            longitude: number | null;
-            whatsapp_opt_in: boolean;
-            createdAt: Date;
-            updatedAt: Date;
+        CLIENTE: {
+            NOME: string;
+            PUBLIC_ID: string;
+            CREATED_AT: Date;
+            UPDATED_AT: Date;
+            DELETED_AT: Date | null;
+            VERSION: number;
+            ID_CLIENTE: number;
+            TELEFONE: string;
+            ENDERECO: string;
         };
     } & {
-        id: string;
-        nome: string;
-        cliente_id: string;
-        especie: string;
-        raca: string | null;
-        porte: string | null;
-        nascimento: Date | null;
-        observacoes: string | null;
+        NOME: string;
+        PUBLIC_ID: string;
+        CREATED_AT: Date;
+        UPDATED_AT: Date;
+        DELETED_AT: Date | null;
+        VERSION: number;
+        ID_CLIENTE: number;
+        ID_PET: number;
+        RACA: string | null;
+        DATA_NASC: Date | null;
     }>;
-    update(id: string, updatePetDto: UpdatePetDto): Promise<{
-        id: string;
-        nome: string;
-        cliente_id: string;
-        especie: string;
-        raca: string | null;
-        porte: string | null;
-        nascimento: Date | null;
-        observacoes: string | null;
+    update(id: number, updatePetDto: UpdatePetDto): Promise<{
+        NOME: string;
+        PUBLIC_ID: string;
+        CREATED_AT: Date;
+        UPDATED_AT: Date;
+        DELETED_AT: Date | null;
+        VERSION: number;
+        ID_CLIENTE: number;
+        ID_PET: number;
+        RACA: string | null;
+        DATA_NASC: Date | null;
     }>;
-    remove(id: string): Promise<{
-        id: string;
-        nome: string;
-        cliente_id: string;
-        especie: string;
-        raca: string | null;
-        porte: string | null;
-        nascimento: Date | null;
-        observacoes: string | null;
+    remove(id: number): Promise<{
+        NOME: string;
+        PUBLIC_ID: string;
+        CREATED_AT: Date;
+        UPDATED_AT: Date;
+        DELETED_AT: Date | null;
+        VERSION: number;
+        ID_CLIENTE: number;
+        ID_PET: number;
+        RACA: string | null;
+        DATA_NASC: Date | null;
+    }>;
+    getChanges(since?: string): Promise<{
+        NOME: string;
+        PUBLIC_ID: string;
+        CREATED_AT: Date;
+        UPDATED_AT: Date;
+        DELETED_AT: Date | null;
+        VERSION: number;
+        ID_CLIENTE: number;
+        ID_PET: number;
+        RACA: string | null;
+        DATA_NASC: Date | null;
+    }[]>;
+    batchUpsert(body: PetSyncBatchRequestDto): Promise<{
+        results: {
+            publicId: string;
+            status: "applied" | "conflict" | "skipped";
+            server?: any;
+        }[];
+    }>;
+    private applyOne;
+    softDeleteByPublicId(publicId: string): Promise<{
+        NOME: string;
+        PUBLIC_ID: string;
+        CREATED_AT: Date;
+        UPDATED_AT: Date;
+        DELETED_AT: Date | null;
+        VERSION: number;
+        ID_CLIENTE: number;
+        ID_PET: number;
+        RACA: string | null;
+        DATA_NASC: Date | null;
     }>;
 }

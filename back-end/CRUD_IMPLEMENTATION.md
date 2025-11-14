@@ -1,374 +1,247 @@
-# PuppyCare Back-end API - Implementação Completa de CRUD
+# PuppyCare Back-end API — CRUD atualizado (PostgreSQL + Prisma)
 
 ## Resumo
 
-Implementação completa de operações CRUD para todos os modelos do schema Prisma em NestJS com TypeScript.
+CRUD completo em NestJS alinhado ao novo schema Prisma com modelos em maiúsculas e IDs inteiros, rodando sobre PostgreSQL.
 
-## O Que Foi Criado
+## O que existe no projeto
 
-### 1. **Módulo Prisma** (Serviço Global)
-- `src/prisma/prisma.service.ts` - Serviço Prisma Client com ciclo de vida de conexão
-- `src/prisma/prisma.module.ts` - Módulo global (disponível para todos os outros módulos)
-- Importado em `app.module.ts`
+### 1) Prisma como módulo global
+- `src/prisma/prisma.service.ts` — Inicializa o Prisma Client e gerencia o ciclo de vida da conexão
+- `src/prisma/prisma.module.ts` — Exporta o serviço como módulo global e é importado em `app.module.ts`
 
-### 2. **Módulos CRUD Completos**
+### 2) Módulos CRUD implementados
 
-Cada módulo inclui:
-- **Arquivo de módulo** - Declaração do módulo NestJS
-- **Controller** - Endpoints da API REST (GET, POST, PATCH, DELETE)
-- **Service** - Lógica de negócio com operações de banco de dados Prisma
-- **DTOs** - Objetos de Transferência de Dados para validação
-  - `create-*.dto.ts` - Operações de criação com decoradores de validação
-  - `update-*.dto.ts` - Operações de atualização (DTO parcial)
+Cada módulo expõe:
+- Módulo (`*.module.ts`)
+- Controller REST (GET, POST, PATCH, DELETE)
+- Service com operações Prisma
+- DTOs com validação (create/update)
 
-#### Módulos Criados/Atualizados:
+#### Módulos ativos e rotas
 
-| Módulo | Caminho | Endpoints | Relações Incluídas |
-|--------|---------|-----------|-------------------|
-| **Clientes** | `/clientes` | GET, POST, PATCH/:id, DELETE/:id | pets, ordens, mensagens |
-| **Pets** | `/pets` | GET, POST, PATCH/:id, DELETE/:id | cliente, ordens |
-| **OrdensServicos** | `/ordens-servicos` | GET, POST, PATCH/:id, DELETE/:id | clientes, pet, paradas, statuses |
-| **Rotas** | `/rotas` | GET, POST, PATCH/:id, DELETE/:id | paradas.ordem |
-| **RotasParadas** | `/rotas-paradas` | GET, POST, PATCH/:id, DELETE/:id | rota, ordem |
-| **Mensagens** | `/mensagens` | GET, POST, PATCH/:id, DELETE/:id | clientes |
-| **Status** | `/status` | GET, POST, PATCH/:id, DELETE/:id | ordem |
-| **Funcionarios** | `/funcionarios` | GET, POST, PATCH/:id, DELETE/:id | - |
+| Módulo | Rota base | Relações carregadas (include) |
+|---|---|---|
+| CLIENTES | `/clientes` | pets, pacotes, atendimentos |
+| PETS | `/pets` | cliente, atendimentos |
+| PACOTES | `/pacotes` | cliente, servico |
+| SERVICOS | `/servicos` | — |
+| USUARIOS | `/usuarios` | — |
+| ATENDIMENTOS | `/atendimentos` | cliente, pet, servico, imagens |
+| ATENDIMENTO_IMAGENS | `/atendimento-imagens` | atendimento |
 
-### 3. **Dependências Instaladas**
-```json
-{
-  "class-validator": "^latest",
-  "class-transformer": "^latest",
-  "@nestjs/mapped-types": "^latest"
-}
-```
+Módulos legados removidos: rotas, rotas-paradas, mensagens, status, funcionarios, ordens-servicos.
 
-### 4. **Prisma Client Gerado**
-- Localização: `back-end/generated/prisma/`
-- Modelos: Clientes, Pets, OrdensServicos, Rotas, RotasParadas, Mensagens, Funcionarios, Status
+### 3) Dependências principais
+- `@nestjs/common`, `@nestjs/core`, `@nestjs/swagger`
+- `@prisma/client` + `prisma`
+- `class-validator` e `class-transformer`
 
-## Referência de Endpoints da API
+### 4) Prisma Client
+Gerado automaticamente a partir do schema em `prisma/schema.prisma`. Não usamos mais a pasta `generated/prisma` legada.
 
-### Clientes
+## Endpoints principais
+
+### CLIENTES
 ```http
-GET    /clientes          # Listar todos os clientes com pets e ordens
-GET    /clientes/:id      # Buscar um cliente com relações
-POST   /clientes          # Criar cliente
-PATCH  /clientes/:id      # Atualizar cliente
-DELETE /clientes/:id      # Deletar cliente
+GET    /clientes
+GET    /clientes/:id
+POST   /clientes
+PATCH  /clientes/:id
+DELETE /clientes/:id
 ```
 
-### Pets
+### PETS
 ```http
-GET    /pets             # Listar todos os pets com cliente e ordens
-GET    /pets/:id         # Buscar um pet com relações
-POST   /pets             # Criar pet
-PATCH  /pets/:id         # Atualizar pet
-DELETE /pets/:id         # Deletar pet
+GET    /pets
+GET    /pets/:id
+POST   /pets
+PATCH  /pets/:id
+DELETE /pets/:id
 ```
 
-### Ordens de Serviço
+### PACOTES
 ```http
-GET    /ordens-servicos          # Listar todas as ordens com relações
-GET    /ordens-servicos/:id      # Buscar uma ordem
-POST   /ordens-servicos          # Criar ordem
-PATCH  /ordens-servicos/:id      # Atualizar ordem
-DELETE /ordens-servicos/:id      # Deletar ordem
+GET    /pacotes
+GET    /pacotes/:id
+POST   /pacotes
+PATCH  /pacotes/:id
+DELETE /pacotes/:id
 ```
 
-### Rotas
+### SERVICOS
 ```http
-GET    /rotas            # Listar todas as rotas com paradas
-GET    /rotas/:id        # Buscar uma rota
-POST   /rotas            # Criar rota
-PATCH  /rotas/:id        # Atualizar rota
-DELETE /rotas/:id        # Deletar rota
+GET    /servicos
+GET    /servicos/:id
+POST   /servicos
+PATCH  /servicos/:id
+DELETE /servicos/:id
 ```
 
-### Rotas Paradas
+### USUARIOS
 ```http
-GET    /rotas-paradas         # Listar todas as paradas com rota e ordem
-GET    /rotas-paradas/:id     # Buscar uma parada
-POST   /rotas-paradas         # Criar parada
-PATCH  /rotas-paradas/:id     # Atualizar parada
-DELETE /rotas-paradas/:id     # Deletar parada
+GET    /usuarios
+GET    /usuarios/:id
+POST   /usuarios
+PATCH  /usuarios/:id
+DELETE /usuarios/:id
 ```
 
-### Mensagens
+### ATENDIMENTOS
 ```http
-GET    /mensagens         # Listar todas as mensagens com cliente
-GET    /mensagens/:id     # Buscar uma mensagem
-POST   /mensagens         # Criar mensagem
-PATCH  /mensagens/:id     # Atualizar mensagem
-DELETE /mensagens/:id     # Deletar mensagem
+GET    /atendimentos
+GET    /atendimentos/:id
+POST   /atendimentos
+PATCH  /atendimentos/:id
+DELETE /atendimentos/:id
 ```
 
-### Status
+### ATENDIMENTO_IMAGENS
 ```http
-GET    /status            # Listar todos os status com ordem
-GET    /status/:id        # Buscar um status
-POST   /status            # Create status
-PATCH  /status/:id        # Atualizar status
-DELETE /status/:id        # Deletar status
+GET    /atendimento-imagens
+GET    /atendimento-imagens/:id
+POST   /atendimento-imagens
+PATCH  /atendimento-imagens/:id
+DELETE /atendimento-imagens/:id
 ```
 
-### Funcionários
-```http
-GET    /funcionarios          # Listar todos os funcionários
-GET    /funcionarios/:id      # Buscar um funcionário
-POST   /funcionarios          # Criar funcionário
-PATCH  /funcionarios/:id      # Atualizar funcionário
-DELETE /funcionarios/:id      # Deletar funcionário
-```
-
-## Exemplo de Estrutura de DTO
+## Exemplos de DTOs (novos campos em MAIÚSCULAS)
 
 ### CreateClienteDto
-```typescript
+```ts
 {
-  nome: string;              // obrigatório
-  email?: string;            // opcional, único, validado
-  telefone: string;          // obrigatório
-  cpf?: string;              // opcional, único
-  endereco_logradouro: string;
-  numero: string;
-  bairro?: string;
-  cidade: string;
-  uf: string;
-  cep: string;
-  latitude?: number;
-  longitude?: number;
-  whatsapp_opt_in?: boolean; // padrão false
+  NOME: string;         // obrigatório
+  TELEFONE: string;     // obrigatório
+  ENDERECO: string;     // obrigatório
 }
 ```
 
 ### CreatePetDto
-```typescript
+```ts
 {
-  cliente_id: string;        // obrigatório, FK para Clientes
-  nome: string;
-  especie: string;           // ex: "cachorro", "gato"
-  raca?: string;
-  porte?: string;            // ex: "pequeno", "médio", "grande"
-  nascimento?: Date;         // string de data ISO
-  observacoes?: string;
+  ID_CLIENTE: number;   // obrigatório (FK)
+  NOME: string;         // obrigatório
+  RACA?: string;        // opcional
+  DATA_NASC?: string;   // opcional (ISO date string)
 }
 ```
 
-### CreateOrdensServicoDto
-```typescript
+### CreatePacoteDto
+```ts
 {
-  cliente_id: string;        // obrigatório
-  pet_id: string;            // obrigatório
-  tipo: string;              // ex: "banho", "tosa", "banho e tosa"
-  status?: string;           // padrão "agendado"
-  data_agendada: Date;       // string de data ISO
-  preco?: number;
-  observacoes?: string;
+  ID_CLIENTE: number;   // obrigatório (FK)
+  ID_SERVICO: number;   // obrigatório (FK)
+  QTD_BANHOS?: number;  // opcional (default 0)
 }
 ```
 
-## Recursos de Validação
-
-Todos os DTOs incluem:
-- ✅ Validação de tipo (`@IsString()`, `@IsNumber()`, etc.)
-- ✅ Validação de e-mail (`@IsEmail()`)
-- ✅ Tratamento de campos opcionais (`@IsOptional()`)
-- ✅ Validação de data (`@IsDateString()`)
-- ✅ Transformação automática de tipo com `class-transformer`
-
-## Tratamento de Erros
-
-Todos os serviços incluem:
-- ✅ `NotFoundException` para IDs inválidos em GET/UPDATE/DELETE
-- ✅ Tratamento de erros do Prisma (restrições únicas, chaves estrangeiras, etc.)
-- ✅ Códigos de status HTTP apropriados
-
-## Próximos Passos
-
-### 1. Iniciar Prisma Postgres (se estiver usando)
-```powershell
-npx prisma dev
+### CreateServicoDto
+```ts
+{
+  NOME: string;
+  DESCRICAO?: string;
+  VALOR?: string; // decimal no banco, string na API
+}
 ```
 
-### 2. Aplicar Schema do Banco de Dados
-```powershell
-npx prisma db push
+### CreateUsuarioDto
+```ts
+{
+  NOME: string;
+  DESCRICAO?: string;
+  SENHA_HASH: string;
+}
 ```
 
-### 3. Executar Seed (opcional)
-```powershell
-npx prisma db seed
+### CreateAtendimentoDto
+```ts
+{
+  ID_CLIENTE: number;   // FK
+  ID_PET: number;       // FK
+  ID_SERVICO: number;   // FK
+  VALOR_COBRADO?: string; // decimal como string
+  TIPO?: string;
+  NOTAS?: string;
+}
 ```
 
-### 4. Iniciar Servidor NestJS
+### CreateAtendimentoImagemDto
+```ts
+{
+  ID_ATENDIMENTO: number;   // FK
+  CAMINHO_IMAGEM: string;
+}
+```
+
+## Validação e erros
+
+- DTOs usam `class-validator`/`class-transformer` com `ValidationPipe` global (whitelist + transform)
+- `NotFoundException` em GET/PATCH/DELETE quando o registro não existe
+- Tratamento básico de erros do Prisma (ex.: constraints únicas / FKs)
+
+## Banco de dados: PostgreSQL
+
+- Datasource configurado via `DATABASE_URL` (PostgreSQL)
+- Docker Compose disponível em `docker-compose.yml` (imagem `postgres:16-alpine`)
+- Comandos úteis:
+
 ```powershell
+# subir banco com Docker
+docker-compose up -d
+
+# preparar banco + seed
+npm run db:setup
+
+# abrir Prisma Studio
+npm run prisma:studio
+```
+
+Mais detalhes em `POSTGRES_SETUP.md`.
+
+## Rodando a API
+
+```powershell
+# instalar deps
+npm install
+
+# iniciar em modo desenvolvimento
 npm run dev
 ```
 
-O servidor será iniciado em `http://localhost:4000` (ou porta configurada).
+Swagger disponível em: http://localhost:4000/api
 
-### 5. Testar Endpoints
+## Notas do schema
 
-Usando seu cliente de API favorito (Postman, Insomnia, Thunder Client, curl):
+- IDs inteiros auto-incrementais (INT) nos modelos
+- Campos/relacionamentos principais:
+  - CLIENTES → PETS (1:N)
+  - CLIENTES → PACOTES (1:N)
+  - PETS → ATENDIMENTOS (1:N)
+  - SERVICOS ↔ ATENDIMENTOS (N:1)
+  - ATENDIMENTOS → ATENDIMENTO_IMAGENS (1:N)
 
-**Criar um Cliente:**
-```bash
-POST http://localhost:4000/clientes
-Content-Type: application/json
-
-{
-  "nome": "João Silva",
-  "telefone": "11999998888",
-  "endereco_logradouro": "Rua das Flores",
-  "numero": "456",
-  "cidade": "São Paulo",
-  "uf": "SP",
-  "cep": "01234-567",
-  "whatsapp_opt_in": true
-}
-```
-
-**Buscar Todos os Clientes:**
-```bash
-GET http://localhost:4000/clientes
-```
-
-## Notas sobre o Schema do Banco de Dados
-
-- Todos os IDs são UUIDs (gerados automaticamente)
-- As relações são mapeadas corretamente:
-  - Clientes → Pets (um-para-muitos)
-  - Clientes → OrdensServicos (um-para-muitos)
-  - Pets → OrdensServicos (um-para-muitos)
-  - Rotas → RotasParadas (um-para-muitos)
-  - OrdensServicos → RotasParadas (um-para-muitos)
-  - OrdensServicos → Status (um-para-muitos)
-  - Clientes → Mensagens (um-para-muitos)
-
-## Resumo da Estrutura de Arquivos
+## Estrutura (resumo)
 
 ```
-back-end/src/
+src/
 ├── prisma/
 │   ├── prisma.module.ts
 │   └── prisma.service.ts
 ├── clientes/
-│   ├── dto/
-│   │   ├── create-cliente.dto.ts
-│   │   └── update-cliente.dto.ts
-│   ├── clientes.controller.ts
-│   ├── clientes.module.ts
-│   |── clientes.service.ts
-|   └── clientes.spec.ts
-├── funcionarios/
-│   ├── dto/
-│   │   ├── create-funcionario.dto.ts
-│   │   └── update-funcionario.dto.ts
-│   ├── funcionarios.controller.ts
-│   ├── funcionarios.module.ts
-│   |── funcionarios.service.ts
-|   └── funcionarios.spec.ts
-├── mapas/
-│   ├── maps.service.ts
-|   └── maps.spec.ts
-├── mensagens/
-│   ├── dto/
-│   │   ├── create-mensagem.dto.ts
-│   │   └── update-mensagem.dto.ts
-│   ├── mensagens.controller.ts
-│   ├── mensagens.module.ts
-│   |── mensagens.service.ts
-|   └── mensagens.spec.ts
-├── ordens-servicos/
-│   ├── dto/
-│   │   ├── create-ordens-servico.dto.ts
-│   │   └── update-ordens-servico.dto.ts
-│   ├── ordens-servicos.controller.ts
-│   ├── ordens-servicos.module.ts
-│   ├── ordens-servicos.service.ts
-|   └── ordens-servicos.spec.ts
 ├── pets/
-│   ├── dto/
-│   │   ├── create-pet.dto.ts
-│   │   └── update-pet.dto.ts
-│   ├── pets.controller.ts
-│   ├── pets.module.ts
-│   ├── pets.service.ts
-|   └── pets.spec.ts
-├── rotas/
-│   ├── dto/
-│   │   ├── create-rota.dto.ts
-│   │   └── update-rota.dto.ts
-│   ├── rotas.controller.ts
-│   ├── rotas.module.ts
-│   ├── rotas.service.ts
-|   ├── rotas.spec.ts
-│   └── rota-planner.ts 
-├── rotas-paradas/
-│   ├── dto/
-│   │   ├── create-rotas-parada.dto.ts
-│   │   └── update-rotas-parada.dto.ts
-│   ├── rotas-paradas.controller.ts
-│   ├── rotas-paradas.module.ts
-│   |── rotas-paradas.service.ts
-|   └── rotas-paradas.spec.ts
-├── status/
-│   ├── dto/
-│   │   ├── create-status.dto.ts
-│   │   └── update-status.dto.ts
-│   ├── status.controller.ts
-│   ├── status.module.ts
-│   |── status.service.ts
-|   └── status.spec.ts
-├── whatsapp/
-│   ├── whatsapp.service.ts
-|   └── whatsapp.spec.ts
-├── app.controller.ts
-├── app.module.ts
-├── app.service.ts
-└── main.ts
+├── pacotes/
+├── servicos/
+├── usuarios/
+├── atendimentos/
+└── atendimento-imagens/
 ```
 
-## Observações sobre a análise estática de código em TypeScript
+## Troubleshooting rápido
 
-Os erros de TypeScript exibidos no editor são **falsos positivos**, pois o VS Code não reindexou o espaço de trabalho após a geração do Prisma Client. O código será compilado e executado corretamente.
+- Erro P1001 (conexão): verifique Docker/credenciais `DATABASE_URL`
+- Prisma Client desatualizado: `npm run prisma:generate`
+- Reset de dev: `npx prisma db push --force-reset` (CUIDADO: apaga dados)
 
-Para resolver:
-1. Recarregue a janela do VS Code: `Ctrl+Shift+P` → "Recarregar Janela"
-2. Ou reinicie o servidor TypeScript: `Ctrl+Shift+P` → "TypeScript: Reiniciar Servidor TS"
+—
 
-## Solução de Problemas
-
-### "Não foi possível encontrar o módulo '../../generated/prisma'"
-- Execute `npx prisma generate` na pasta `back-end`
-- Recarregue a janela do VS Code
-
-### Erros de conexão com o banco de dados (P1001)
-- Certifique-se de que o MySQL esteja em execução
-- Verifique as credenciais no arquivo `.env`
-- Ou use o Docker: `docker-compose up -d`
-
-### Validação não está funcionando
-- Certifique-se de que o pipe de validação global está habilitado em `main.ts`:
-```typescript
-app.useGlobalPipes(new ValidationPipe({
-  whitelist: true,
-  forbidNonWhitelisted: true,
-  transform: true,
-}));
-```
-
-## Destaques da Arquitetura
-
-✅ **Separação limpa de responsabilidades** (Controller → Service → Prisma)  
-✅ **DTOs type-safe** com decoradores de validação  
-✅ **Inferência automática de tipos** do schema Prisma  
-✅ **Carregamento de relações** com `include` para dados aninhados  
-✅ **Tratamento de erros** com exceções HTTP apropriadas  
-✅ **Serviço Prisma global** (sem conexões duplicadas)  
-✅ **Convenções RESTful** (GET, POST, PATCH, DELETE)  
-
----
-
-**Todos os módulos estão prontos para uso em produção!** 🎉
+Módulos atualizados e prontos para uso com PostgreSQL.

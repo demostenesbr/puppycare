@@ -2,228 +2,147 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
+async function seedServicos() {
+    const count = await prisma.sERVICOS.count();
+    if (count === 0) {
+        await prisma.sERVICOS.createMany({
+            data: [
+                { NOME: 'Banho', DESCRICAO: 'Banho completo para pets', VALOR: '79.90' },
+                { NOME: 'Tosa', DESCRICAO: 'Tosa higiênica e completa', VALOR: '120.00' },
+            ],
+        });
+        console.log('✅ SERVICOS created');
+    }
+    else {
+        console.log('ℹ️ SERVICOS already have data, skipping creation');
+    }
+    const all = await prisma.sERVICOS.findMany();
+    return {
+        byName: Object.fromEntries(all.map((s) => [s.NOME, s])),
+        list: all,
+    };
+}
+async function seedClientes() {
+    const count = await prisma.cLIENTES.count();
+    if (count === 0) {
+        await prisma.cLIENTES.createMany({
+            data: [
+                { NOME: 'Maria Silva', TELEFONE: '11999990001', ENDERECO: 'Rua A, 123 - Centro, São Paulo/SP' },
+                { NOME: 'João Pereira', TELEFONE: '11988880002', ENDERECO: 'Av. B, 200 - Bela Vista, São Paulo/SP' },
+            ],
+        });
+        console.log('✅ CLIENTES created');
+    }
+    else {
+        console.log('ℹ️ CLIENTES already have data, skipping creation');
+    }
+    const all = await prisma.cLIENTES.findMany();
+    return {
+        byName: Object.fromEntries(all.map((c) => [c.NOME, c])),
+        list: all,
+    };
+}
+async function seedUsuarios() {
+    const count = await prisma.uSUARIOS.count();
+    if (count === 0) {
+        await prisma.uSUARIOS.createMany({
+            data: [
+                { NOME: 'Administrador', DESCRICAO: 'Usuário administrador padrão', SENHA_HASH: 'hash_teste' },
+                { NOME: 'Operador', DESCRICAO: 'Usuário operador', SENHA_HASH: 'hash_teste' },
+            ],
+        });
+        console.log('✅ USUARIOS created');
+    }
+    else {
+        console.log('ℹ️ USUARIOS already have data, skipping creation');
+    }
+}
+async function seedPets(clienteId) {
+    const count = await prisma.pETS.count({ where: { ID_CLIENTE: clienteId } });
+    if (count === 0) {
+        await prisma.pETS.createMany({
+            data: [
+                { NOME: 'Rex', RACA: 'Vira-lata', DATA_NASC: new Date('2020-01-01'), ID_CLIENTE: clienteId },
+                { NOME: 'Luna', RACA: 'Poodle', DATA_NASC: new Date('2019-06-10'), ID_CLIENTE: clienteId },
+            ],
+        });
+        console.log('✅ PETS created');
+    }
+    else {
+        console.log('ℹ️ PETS already have data for this cliente, skipping creation');
+    }
+    const all = await prisma.pETS.findMany({ where: { ID_CLIENTE: clienteId } });
+    return all;
+}
+async function seedPacotes(clienteId, servicoId) {
+    const count = await prisma.pACOTES.count({ where: { ID_CLIENTE: clienteId, ID_SERVICO: servicoId } });
+    if (count === 0) {
+        await prisma.pACOTES.create({
+            data: {
+                ID_CLIENTE: clienteId,
+                ID_SERVICO: servicoId,
+                QTD_BANHOS: 4,
+            },
+        });
+        console.log('✅ PACOTES created');
+    }
+    else {
+        console.log('ℹ️ PACOTES already have data for this cliente/servico, skipping creation');
+    }
+}
+async function seedAtendimentos(clienteId, petId, servicoId) {
+    const count = await prisma.aTENDIMENTOS.count({
+        where: { ID_CLIENTE: clienteId, ID_PET: petId, ID_SERVICO: servicoId },
+    });
+    if (count === 0) {
+        const atendimento = await prisma.aTENDIMENTOS.create({
+            data: {
+                ID_CLIENTE: clienteId,
+                ID_PET: petId,
+                ID_SERVICO: servicoId,
+                VALOR_COBRADO: '79.90',
+                TIPO: 'banho',
+                NOTAS: 'Primeira visita',
+            },
+        });
+        console.log('✅ ATENDIMENTOS created');
+        return atendimento;
+    }
+    else {
+        console.log('ℹ️ ATENDIMENTOS already exists for this relation, using first');
+        return prisma.aTENDIMENTOS.findFirst({
+            where: { ID_CLIENTE: clienteId, ID_PET: petId, ID_SERVICO: servicoId },
+            orderBy: { ID_ATENDIMENTO: 'asc' },
+        });
+    }
+}
+async function seedAtendimentoImagens(atendimentoId) {
+    const count = await prisma.aTENDIMENTO_IMAGENS.count({ where: { ID_ATENDIMENTO: atendimentoId } });
+    if (count === 0) {
+        await prisma.aTENDIMENTO_IMAGENS.createMany({
+            data: [
+                { ID_ATENDIMENTO: atendimentoId, CAMINHO_IMAGEM: '/uploads/atendimentos/1/foto1.jpg' },
+            ],
+        });
+        console.log('✅ ATENDIMENTO_IMAGENS created');
+    }
+    else {
+        console.log('ℹ️ ATENDIMENTO_IMAGENS already exist for this atendimento, skipping creation');
+    }
+}
 async function main() {
-    console.log('🔄 Seeding database...');
-    const clientesData = [
-        {
-            id: 'cli_1',
-            nome: 'Maria Silva',
-            email: 'maria.silva@example.com',
-            telefone: '11999990001',
-            cpf: '12345678901',
-            endereco_logradouro: 'Rua A',
-            numero: '123',
-            bairro: 'Centro',
-            cidade: 'São Paulo',
-            uf: 'SP',
-            cep: '01000-000',
-            latitude: -23.55052,
-            longitude: -46.633308,
-            whatsapp_opt_in: true,
-        },
-    ];
-    for (const c of clientesData) {
-        await prisma.clientes.upsert({
-            where: { id: c.id },
-            update: {
-                nome: c.nome,
-                email: c.email,
-                telefone: c.telefone,
-                cpf: c.cpf,
-                endereco_logradouro: c.endereco_logradouro,
-                numero: c.numero,
-                bairro: c.bairro,
-                cidade: c.cidade,
-                uf: c.uf,
-                cep: c.cep,
-                latitude: c.latitude,
-                longitude: c.longitude,
-                whatsapp_opt_in: c.whatsapp_opt_in,
-            },
-            create: c,
-        });
-    }
-    console.log('✅ Clientes seeded');
-    const petsData = [
-        {
-            id: 'pet_1',
-            cliente_id: 'cli_1',
-            nome: 'Rex',
-            especie: 'cachorro',
-            raca: 'vira-lata',
-            porte: 'médio',
-            nascimento: new Date('2020-01-01'),
-            observacoes: 'Paciente com medo de secador',
-        },
-    ];
-    for (const p of petsData) {
-        await prisma.pets.upsert({
-            where: { id: p.id },
-            update: {
-                nome: p.nome,
-                especie: p.especie,
-                raca: p.raca || undefined,
-                porte: p.porte || undefined,
-                nascimento: p.nascimento || undefined,
-                observacoes: p.observacoes || undefined,
-                cliente_id: p.cliente_id,
-            },
-            create: p,
-        });
-    }
-    console.log('✅ Pets seeded');
-    const funcionariosData = [
-        {
-            id: 'func_1',
-            nome: 'João Pereira',
-            email: 'joao.pereira@puppycare.com',
-            telefone: '11988880001',
-            cargo: 'banhista',
-            ativo: true,
-        },
-    ];
-    for (const f of funcionariosData) {
-        await prisma.funcionarios.upsert({
-            where: { email: f.email },
-            update: {
-                nome: f.nome,
-                telefone: f.telefone,
-                cargo: f.cargo,
-                ativo: f.ativo,
-            },
-            create: f,
-        });
-    }
-    console.log('✅ Funcionarios seeded');
-    const ordensData = [
-        {
-            id: 'ord_1',
-            cliente_id: 'cli_1',
-            pet_id: 'pet_1',
-            tipo: 'banho',
-            status: 'agendado',
-            data_agendada: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            preco: '79.90',
-            observacoes: 'Primeira visita',
-        },
-    ];
-    for (const o of ordensData) {
-        await prisma.ordensServicos.upsert({
-            where: { id: o.id },
-            update: {
-                tipo: o.tipo,
-                status: o.status,
-                data_agendada: o.data_agendada,
-                preco: o.preco,
-                observacoes: o.observacoes || undefined,
-                cliente_id: o.cliente_id,
-                pet_id: o.pet_id,
-            },
-            create: o,
-        });
-    }
-    console.log('✅ OrdensServicos seeded');
-    const rotasData = [
-        {
-            id: 'rota_1',
-            data: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            tipo: 'coleta',
-            status: 'planejada',
-            motorista: 'Carlos Souza',
-            kilometragem_prevista: 12.5,
-            tempo_previsto: 45,
-        },
-    ];
-    for (const r of rotasData) {
-        await prisma.rotas.upsert({
-            where: { id: r.id },
-            update: {
-                data: r.data,
-                tipo: r.tipo,
-                status: r.status,
-                motorista: r.motorista || undefined,
-                kilometragem_prevista: r.kilometragem_prevista || undefined,
-                tempo_previsto: r.tempo_previsto || undefined,
-            },
-            create: r,
-        });
-    }
-    console.log('✅ Rotas seeded');
-    const rotasParadasData = [
-        {
-            id: 'parada_1',
-            rota_id: 'rota_1',
-            ordem_id: 'ord_1',
-            sequencia: 1,
-            latitude: -23.55052,
-            longitude: -46.633308,
-            status: 'pendente',
-        },
-    ];
-    for (const rp of rotasParadasData) {
-        await prisma.rotasParadas.upsert({
-            where: { id: rp.id },
-            update: {
-                rota_id: rp.rota_id,
-                ordem_id: rp.ordem_id,
-                sequencia: rp.sequencia,
-                latitude: rp.latitude,
-                longitude: rp.longitude,
-                status: rp.status,
-            },
-            create: rp,
-        });
-    }
-    console.log('✅ RotasParadas seeded');
-    const mensagensData = [
-        {
-            id: 'msg_1',
-            cliente_id: 'cli_1',
-            canal: 'whatsapp',
-            template: null,
-            conteudo: 'Olá Maria, seu agendamento foi recebido.',
-            status: 'pendente',
-            meta_message_id: null,
-            erro: null,
-        },
-    ];
-    for (const m of mensagensData) {
-        await prisma.mensagens.upsert({
-            where: { id: m.id },
-            update: {
-                cliente_id: m.cliente_id,
-                canal: m.canal,
-                template: m.template || undefined,
-                conteudo: m.conteudo,
-                status: m.status,
-                meta_message_id: m.meta_message_id || undefined,
-                erro: m.erro || undefined,
-            },
-            create: m,
-        });
-    }
-    console.log('✅ Mensagens seeded');
-    const statusData = [
-        {
-            id: 'stat_1',
-            ordem_id: 'ord_1',
-            status: 'agendado',
-            timestamp: new Date(),
-        },
-    ];
-    for (const s of statusData) {
-        await prisma.status.upsert({
-            where: { id: s.id },
-            update: {
-                ordem_id: s.ordem_id,
-                status: s.status,
-                timestamp: s.timestamp,
-            },
-            create: s,
-        });
-    }
-    console.log('✅ Status seeded');
-    console.log('🌟 Seeding finished!');
+    console.log('🔄 Seeding database (new schema)...');
+    const { byName: servicosByName } = await seedServicos();
+    const { byName: clientesByName } = await seedClientes();
+    await seedUsuarios();
+    const maria = clientesByName['Maria Silva'] || (await prisma.cLIENTES.findFirst({ orderBy: { ID_CLIENTE: 'asc' } }));
+    const banho = servicosByName['Banho'] || (await prisma.sERVICOS.findFirst({ orderBy: { ID_SERVICO: 'asc' } }));
+    const pets = await seedPets(maria.ID_CLIENTE);
+    const pet = pets[0] || (await prisma.pETS.findFirst({ where: { ID_CLIENTE: maria.ID_CLIENTE }, orderBy: { ID_PET: 'asc' } }));
+    await seedPacotes(maria.ID_CLIENTE, banho.ID_SERVICO);
+    const atendimento = await seedAtendimentos(maria.ID_CLIENTE, pet.ID_PET, banho.ID_SERVICO);
+    await seedAtendimentoImagens(atendimento.ID_ATENDIMENTO);
+    console.log('🌟 Seeding finished (new schema)!');
 }
 main()
     .catch((e) => {

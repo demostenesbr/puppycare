@@ -30,12 +30,11 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('clientes', 'Gerenciamento de clientes')
     .addTag('pets', 'Gerenciamento de pets')
-    .addTag('ordens-servicos', 'Gerenciamento de ordens de serviço')
-    .addTag('rotas', 'Gerenciamento de rotas')
-    .addTag('rotas-paradas', 'Gerenciamento de paradas de rotas')
-    .addTag('mensagens', 'Gerenciamento de mensagens')
-    .addTag('status', 'Gerenciamento de status de ordens')
-    .addTag('funcionarios', 'Gerenciamento de funcionários')
+    .addTag('pacotes', 'Gerenciamento de assinaturas (pacotes)')
+    .addTag('servicos', 'Gerenciamento de serviços oferecidos')
+    .addTag('usuarios', 'Gerenciamento de usuários do sistema')
+    .addTag('atendimentos', 'Gerenciamento de atendimentos')
+    .addTag('atendimento-imagens', 'Gerenciamento de imagens de atendimentos')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -7,12 +7,12 @@ import AdminMenuItem from "../../components/ui/custom/AdminMenuItem";
 import AgendamentoPage from "./agendamento/page";
 import ClientesPage from "./clientes/page";
 import AnalisePage from "./analise/page";
-import { FuncionariosPage } from "./funcionarios/page";
+import { UsuariosPage } from "./usuarios/page";
 import AdminHomeLoading from "@/components/ui/custom/AdminHomeLoading";
 
 export default function AdminPage() {
     const [isOpen, setIsOpen] = useState(true);
-    const [paginaAtual, setPaginaAtual] = useState<"agendamentos" | "clientes" | "analise" | "funcionarios" | "opcoes" | null>("agendamentos");
+    const [paginaAtual, setPaginaAtual] = useState<"agendamentos" | "clientes" | "analise" | "usuarios" | "opcoes" | null>("agendamentos");
 
     return (
         <div>
@@ -114,11 +114,11 @@ export default function AdminPage() {
                                 <AdminMenuItem
                                     icon={<Notebook color="currentColor" />}
                                     className={`${!isOpen ? "flex justify-center align-center" : "justify-start"}`}
-                                    label="Funcionários"
+                                    label="Usuários"
                                     href=""
                                     isOpen={isOpen}
-                                    active={paginaAtual === "funcionarios"}
-                                    onClick={() => setPaginaAtual("funcionarios")}
+                                    active={paginaAtual === "usuarios"}
+                                    onClick={() => setPaginaAtual("usuarios")}
 
                                 />
                             </div>
@@ -159,7 +159,7 @@ export default function AdminPage() {
                         {paginaAtual === "agendamentos" && <AgendamentoPage />}
                         {paginaAtual === "clientes" && <ClientesPage />}
                         {paginaAtual === "analise" && <AnalisePage />}
-                        {paginaAtual === "funcionarios" && <FuncionariosPage />}
+                        {paginaAtual === "usuarios" && <UsuariosPage />}
 
                     </section>
 

@@ -23,97 +23,85 @@
 
 ## Description
 
-PuppyCare Back-end API - Sistema de gerenciamento de serviços de banho e tosa para pets.
+PuppyCare Back-end API — gerenciamento de serviços de banho e tosa para pets.
 
-Desenvolvido com [NestJS](https://github.com/nestjs/nest), Prisma ORM e MySQL.
+Stack: [NestJS](https://nestjs.com), Prisma ORM e PostgreSQL.
 
-## 🗄️ Database Setup (MySQL)
+## 🗄️ Database Setup (PostgreSQL)
 
-### Opção 1: Setup Automático com Docker (Recomendado)
+Veja o guia completo em [POSTGRES_SETUP.md](./POSTGRES_SETUP.md).
 
-```bash
-# Execute o script de setup
-.\setup-mysql.ps1
+Atalho (Docker + Prisma):
 
-# Ou use docker-compose diretamente
+```powershell
+# 1) Subir PostgreSQL com Docker
 docker-compose up -d
+
+# 2) Criar tabelas e executar seed
 npm run db:setup
 ```
 
-### Opção 2: MySQL Local
+Credenciais padrão (Docker): host=localhost, porta=5432, user=puppycare, password=puppycare_pass, db=puppycare
 
-Consulte o arquivo [MYSQL_SETUP.md](./MYSQL_SETUP.md) para instruções detalhadas de instalação e configuração do MySQL local.
+Para PostgreSQL local, configure `DATABASE_URL` no `.env`:
 
-### Configurar Banco de Dados Manualmente
+```
+DATABASE_URL="postgresql://puppycare:puppycare_pass@localhost:5432/puppycare"
+```
 
-```bash
-# 1. Gerar o Prisma Client
+Comandos úteis:
+
+```powershell
+# gerar Prisma Client
 npm run prisma:generate
 
-# 2. Criar as tabelas
+# aplicar schema
 npm run db:push
 
-# 3. Popular com dados de exemplo
-npm run seed
+# abrir Prisma Studio
+npm run prisma:studio
 ```
 
 ## Project setup
 
-```bash
-$ npm install
+```powershell
+npm install
 ```
 
 ## Compile and run the project
 
-```bash
-# development
-$ npm run start
+```powershell
+# desenvolvimento (watch mode)
+npm run dev
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# produção
+npm run prod
 ```
+
+Swagger: http://localhost:4000/api
 
 ## Run tests
 
-```bash
+```powershell
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Veja o guia oficial do NestJS sobre [deploy](https://docs.nestjs.com/deployment). Em produção, use migrações Prisma versionadas (`npx prisma migrate deploy`) e um PostgreSQL gerenciado.
 
 ## Resources
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- [NestJS Documentation](https://docs.nestjs.com)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [PostgreSQL](https://www.postgresql.org/docs/)
 
 ## Support
 

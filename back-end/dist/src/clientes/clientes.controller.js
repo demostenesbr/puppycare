@@ -18,6 +18,7 @@ const swagger_1 = require("@nestjs/swagger");
 const clientes_service_1 = require("./clientes.service");
 const create_cliente_dto_1 = require("./dto/create-cliente.dto");
 const update_cliente_dto_1 = require("./dto/update-cliente.dto");
+const cliente_sync_dto_1 = require("./dto/cliente-sync.dto");
 let ClientesController = class ClientesController {
     clientesService;
     constructor(clientesService) {
@@ -37,6 +38,15 @@ let ClientesController = class ClientesController {
     }
     remove(id) {
         return this.clientesService.remove(id);
+    }
+    getChanges(since) {
+        return this.clientesService.getChanges(since);
+    }
+    batch(body) {
+        return this.clientesService.batchUpsert(body);
+    }
+    softDeleteByPublicId(publicId) {
+        return this.clientesService.softDeleteByPublicId(publicId);
     }
 };
 exports.ClientesController = ClientesController;
@@ -67,9 +77,9 @@ __decorate([
     (0, swagger_1.ApiParam)({ name: 'id', description: 'ID do cliente' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Cliente encontrado.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Cliente não encontrado.' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ClientesController.prototype, "findOne", null);
 __decorate([
@@ -78,10 +88,10 @@ __decorate([
     (0, swagger_1.ApiParam)({ name: 'id', description: 'ID do cliente' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Cliente atualizado com sucesso.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Cliente não encontrado.' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_cliente_dto_1.UpdateClienteDto]),
+    __metadata("design:paramtypes", [Number, update_cliente_dto_1.UpdateClienteDto]),
     __metadata("design:returntype", void 0)
 ], ClientesController.prototype, "update", null);
 __decorate([
@@ -90,11 +100,38 @@ __decorate([
     (0, swagger_1.ApiParam)({ name: 'id', description: 'ID do cliente' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Cliente removido com sucesso.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Cliente não encontrado.' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], ClientesController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Get)('changes'),
+    (0, swagger_1.ApiOperation)({ summary: 'Listar alterações de clientes desde um timestamp' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Mudanças retornadas com sucesso.' }),
+    __param(0, (0, common_1.Query)('since')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], ClientesController.prototype, "remove", null);
+], ClientesController.prototype, "getChanges", null);
+__decorate([
+    (0, common_1.Post)('batch'),
+    (0, swagger_1.ApiOperation)({ summary: 'Aplicar lote de alterações de clientes (upsert por PUBLIC_ID)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Resultados do processamento do lote.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [cliente_sync_dto_1.ClienteSyncBatchRequestDto]),
+    __metadata("design:returntype", void 0)
+], ClientesController.prototype, "batch", null);
+__decorate([
+    (0, common_1.Delete)('public/:publicId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Soft delete por PUBLIC_ID (marca DELETED_AT)' }),
+    (0, swagger_1.ApiParam)({ name: 'publicId', description: 'PUBLIC_ID do cliente' }),
+    __param(0, (0, common_1.Param)('publicId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ClientesController.prototype, "softDeleteByPublicId", null);
 exports.ClientesController = ClientesController = __decorate([
     (0, swagger_1.ApiTags)('clientes'),
     (0, common_1.Controller)('clientes'),

@@ -16,7 +16,7 @@ export default function AnalisePage() {
           </div>
 
           <div className="ml-10 bg-[#D9D9D9] p-5 rounded-md">
-            <h3>20 Assinaturas</h3>
+            <h3>20 Pacotes</h3>
           </div>
         </div>
       </AdminBlock>
