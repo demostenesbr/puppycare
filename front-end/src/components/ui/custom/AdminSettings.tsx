@@ -1,8 +1,8 @@
 import { Children } from "react";
 
-export function AdminBlock({ children, className = " " }: { children: React.ReactNode, className?: string }) {
+export function AdminBlock({ children }: { children: React.ReactNode }) {
     return (
-        <div className={`bg-[#d1d6d2] p-[2rem] mt-10 rounded-[2rem] ${className}`}>
+        <div className="bg-[#BCBCBC] p-20 mt-10 rounded-md">
             {children}
         </div>
     );
@@ -10,7 +10,7 @@ export function AdminBlock({ children, className = " " }: { children: React.Reac
 
 export function AdminBlockTitle({ children }: { children: React.ReactNode }) {
     return (
-        <h2 className="flex justify-left text-7xl mb-5 text-[1.85rem]">
+        <h2 className="flex justify-left text-7xl mb-5">
             {children}
         </h2>
     );
