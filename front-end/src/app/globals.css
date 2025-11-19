@@ -116,7 +116,25 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* utilitária simples para usar no JSX */
+.fade-slide-in {
+  animation: fadeSlideIn 0.25s ease-out;
 }

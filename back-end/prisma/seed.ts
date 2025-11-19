@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -46,10 +47,12 @@ async function seedClientes() {
 async function seedUsuarios() {
   const count = await prisma.uSUARIOS.count();
   if (count === 0) {
+    const senhaAdmin = await bcrypt.hash('admin123', 10);
+    const senhaOperador = await bcrypt.hash('operador123', 10);
     await prisma.uSUARIOS.createMany({
       data: [
-        { NOME: 'Administrador', DESCRICAO: 'Usuário administrador padrão', SENHA_HASH: 'hash_teste' },
-        { NOME: 'Operador', DESCRICAO: 'Usuário operador', SENHA_HASH: 'hash_teste' },
+        { NOME: 'Administrador', DESCRICAO: 'Usuário administrador padrão', EMAIL: 'admin@puppycarepet.com.br', SENHA_HASH: senhaAdmin },
+        { NOME: 'Operador', DESCRICAO: 'Usuário operador', EMAIL: 'operador@puppycarepet.com.br', SENHA_HASH: senhaOperador },
       ],
     });
     console.log('✅ USUARIOS created');

@@ -7,11 +7,14 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "clean": "rimraf dist tsconfig.build.tsbuildinfo",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",
     "debug": "nest start --debug --watch",
     "prod": "node dist/main",
+    "postinstall": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -34,9 +37,11 @@
     "@nestjs/swagger": "^11.2.1",
     "@prisma/client": "^6.18.0",
     "axios": "^1.13.1",
+    "bcryptjs": "^3.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dotenv": "^17.2.3",
+    "jsonwebtoken": "^9.0.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1"
@@ -58,6 +63,7 @@
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
     "prisma": "^6.18.0",
+    "rimraf": "^6.1.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
@@ -85,10 +91,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-      "testEnvironment": "node",
-      "maxWorkers": "50%",
-      "testTimeout": 10000,
-      "bail": false,
-      "cache": true
+    "testEnvironment": "node",
+    "maxWorkers": "50%",
+    "testTimeout": 10000,
+    "bail": false,
+    "cache": true
   }
 }

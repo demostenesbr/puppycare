@@ -23,9 +23,13 @@ export default function AdminMenuItem({
     const baseClasses = `
         flex items-center gap-3 rounded-md px-4 py-2
         transition-all duration-300
-        ${danger ? "bg-[#E45C5C] hover:bg-[#F63434]" : ""}
-        ${active && !danger ? "bg-[#333] text-white" : "bg-[#AAAAAA] hover:bg-[#444]"}
-        ${className || ""}
+       ${danger
+            ? "bg-[#E45C5C] hover:bg-[#F63434] text-black hover:text-white"
+            : active
+                ? "bg-[#333] text-white"
+                : "bg-[#d1d6d2] hover:bg-[#444]"
+        }
+    ${className || ""}
     `;
 
     return href ? (

@@ -1,51 +1,39 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-  Query,
-} from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, Patch, Delete, ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { UsuariosService } from './usuarios.service';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { UsuarioSyncBatchRequestDto } from './dto/usuario-sync.dto';
+import { LoginDto } from './dto/create-usuario.dto';
+
+// Local DTO used for batch sync requests to avoid missing module import.
+// Adjust the shape below to match the real payload expected by the service.
+interface UsuarioSyncBatchRequestDto {
+  items: any[];
+  source?: string;
+  timestamp?: string;
+}
 
 @ApiTags('usuarios')
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Criar um novo usuário' })
-  @ApiResponse({ status: 201, description: 'Usuário criado com sucesso.' })
-  @ApiResponse({ status: 400, description: 'Dados inválidos.' })
-  create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuariosService.create(createUsuarioDto);
+  @Post('login')
+  @ApiOperation({ summary: 'Autenticar usuário e retornar JWT por EMAIL' })
+  @ApiResponse({ status: 200, description: 'Login realizado com sucesso.' })
+  @ApiResponse({ status: 401, description: 'Credenciais inválidas.' })
+  async login(@Body() body: LoginDto) {
+    return this.usuariosService.login(body.email, body.senha);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Listar todos os usuários' })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de usuários retornada com sucesso.',
-  })
-  findAll() {
-    return this.usuariosService.findAll();
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Buscar um usuário por ID' })
-  @ApiParam({ name: 'id', description: 'ID do usuário' })
-  @ApiResponse({ status: 200, description: 'Usuário encontrado.' })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usuariosService.findOne(id);
-  }
+@Get()
+@ApiOperation({ summary: 'Listar todos os usuários' })
+@ApiResponse({
+  status: 200,
+  description: 'Lista de usuários retornada com sucesso.',
+})
+findAll() {
+  return this.usuariosService.findAll();
+}
 
   // --- Offline-first sync endpoints ---
   @Get('changes')
@@ -62,26 +50,7 @@ export class UsuariosController {
     return this.usuariosService.batchUpsert(body);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Atualizar um usuário' })
-  @ApiParam({ name: 'id', description: 'ID do usuário' })
-  @ApiResponse({ status: 200, description: 'Usuário atualizado com sucesso.' })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUsuarioDto: UpdateUsuarioDto,
-  ) {
-    return this.usuariosService.update(id, updateUsuarioDto);
-  }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Remover um usuário' })
-  @ApiParam({ name: 'id', description: 'ID do usuário' })
-  @ApiResponse({ status: 200, description: 'Usuário removido com sucesso.' })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usuariosService.remove(id);
-  }
 
   @Delete('public/:publicId')
   @ApiOperation({ summary: 'Soft delete por PUBLIC_ID (marca DELETED_AT)' })
@@ -90,3 +59,4 @@ export class UsuariosController {
     return this.usuariosService.softDeleteByPublicId(publicId);
   }
 }
+

@@ -1,0 +1,61 @@
+.theme-checkbox {
+    --toggle-size: 16px;
+
+    /* -1 = esquerda (verde), 0 = meio (cinza), 1 = direita (vermelho) */
+    --state: 0;
+    --color-left: #00d84f;
+    /* verde */
+    --color-center: #d4d4d4;
+    /* cinza */
+    --color-right: #ef4444;
+    /* vermelho */
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 6.25em;
+    height: 3.125em;
+    border-radius: 99em;
+    position: relative;
+    cursor: grab;
+    font-size: var(--toggle-size);
+    transition: background 0.3s ease;
+}
+
+.theme-checkbox--left {
+    background: linear-gradient(to right, var(--color-left) 50%, var(--color-center) 50%) no-repeat;
+    background-size: 205%;
+    background-position: 0;
+}
+
+.theme-checkbox--center {
+    background: linear-gradient(to right, var(--color-center) 50%, var(--color-center) 50%) no-repeat;
+    background-size: 205%;
+    background-position: 0;
+}
+
+.theme-checkbox--right {
+    background: linear-gradient(to right, var(--color-center) 50%, var(--color-right) 50%) no-repeat;
+    background-size: 205%;
+    background-position: 100%;
+}
+
+.theme-checkbox::before {
+    content: "";
+    width: 2.25em;
+    height: 2.25em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(calc(-50% + var(--thumb-x)),
+            -50%);
+    background: linear-gradient(to right, #efefef 50%, #2a2a2a 50%) no-repeat;
+    background-size: 205%;
+    background-position: 100%;
+    border-radius: 50%;
+    transition: transform 0.2s ease, background-position 0.3s ease;
+}
+
+.theme-checkbox:active {
+    cursor: grabbing;
+}

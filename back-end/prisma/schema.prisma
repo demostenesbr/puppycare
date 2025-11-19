@@ -11,7 +11,15 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // URLs de conexão não são mais suportadas no schema.prisma (Prisma 7+).
+  // Mova sua URL de conexão para Migrate para prisma.config.ts e passe
+  // `adapter` (para uma conexão direta com o banco de dados) ou `accelerateUrl` (para Accelerate)
+  // ao criar o PrismaClient. Exemplo de prisma.config.ts (crie na raiz do projeto):
+  // export default {
+  // datasources: {
+  // db: { url: process.env.DATABASE_URL },
+  // },
+  // };
 }
 
 model ATENDIMENTOS {
@@ -27,11 +35,11 @@ model ATENDIMENTOS {
   NOTAS          String?
   IMAGENS        ATENDIMENTO_IMAGENS[] // um atendimento pode ter várias imagens (back-relation para ATENDIMENTO_IMAGENS.ATENDIMENTO)
   // --- Campos de rastreamento com prioridade para uso offline ---
-  PUBLIC_ID   String    @unique @default(uuid())
-  CREATED_AT  DateTime  @default(now())
-  UPDATED_AT  DateTime  @updatedAt
-  DELETED_AT  DateTime?
-  VERSION     Int       @default(1)
+  PUBLIC_ID      String                @unique @default(uuid())
+  CREATED_AT     DateTime              @default(now())
+  UPDATED_AT     DateTime              @updatedAt
+  DELETED_AT     DateTime?
+  VERSION        Int                   @default(1)
 
   @@index([UPDATED_AT])
 }
@@ -43,11 +51,11 @@ model ATENDIMENTO_IMAGENS {
   CAMINHO_IMAGEM String       @db.VarChar(255)
   DATA_UPLOAD    DateTime     @default(now())
   // --- Campos de rastreamento com prioridade para uso offline ---
-  PUBLIC_ID   String    @unique @default(uuid())
-  CREATED_AT  DateTime  @default(now())
-  UPDATED_AT  DateTime  @updatedAt
-  DELETED_AT  DateTime?
-  VERSION     Int       @default(1)
+  PUBLIC_ID      String       @unique @default(uuid())
+  CREATED_AT     DateTime     @default(now())
+  UPDATED_AT     DateTime     @updatedAt
+  DELETED_AT     DateTime?
+  VERSION        Int          @default(1)
 
   @@index([UPDATED_AT])
 }
@@ -61,11 +69,11 @@ model CLIENTES {
   PACOTES      PACOTES[] // um cliente pode ter vários pacotes (back-relation para PACOTES.CLIENTE)
   ATENDIMENTOS ATENDIMENTOS[] // um cliente pode ter vários atendimentos (back-relation para ATENDIMENTOS.CLIENTE)
   // --- Campos de rastreamento com prioridade para uso offline ---
-  PUBLIC_ID   String    @unique @default(uuid())
-  CREATED_AT  DateTime  @default(now())
-  UPDATED_AT  DateTime  @updatedAt
-  DELETED_AT  DateTime?
-  VERSION     Int       @default(1)
+  PUBLIC_ID    String         @unique @default(uuid())
+  CREATED_AT   DateTime       @default(now())
+  UPDATED_AT   DateTime       @updatedAt
+  DELETED_AT   DateTime?
+  VERSION      Int            @default(1)
 
   @@index([UPDATED_AT])
 }
@@ -79,28 +87,28 @@ model PETS {
   CLIENTE      CLIENTES       @relation(fields: [ID_CLIENTE], references: [ID_CLIENTE])
   ATENDIMENTOS ATENDIMENTOS[]
   // --- Campos de rastreamento com prioridade para uso offline ---
-  PUBLIC_ID   String    @unique @default(uuid())
-  CREATED_AT  DateTime  @default(now())
-  UPDATED_AT  DateTime  @updatedAt
-  DELETED_AT  DateTime?
-  VERSION     Int       @default(1)
+  PUBLIC_ID    String         @unique @default(uuid())
+  CREATED_AT   DateTime       @default(now())
+  UPDATED_AT   DateTime       @updatedAt
+  DELETED_AT   DateTime?
+  VERSION      Int            @default(1)
 
   @@index([UPDATED_AT])
 }
 
 model PACOTES {
-  ID_ASSINATURA Int      @id @default(autoincrement())
+  ID_ASSINATURA Int       @id @default(autoincrement())
   ID_CLIENTE    Int
-  CLIENTE       CLIENTES @relation(fields: [ID_CLIENTE], references: [ID_CLIENTE])
+  CLIENTE       CLIENTES  @relation(fields: [ID_CLIENTE], references: [ID_CLIENTE])
   ID_SERVICO    Int
-  SERVICO       SERVICOS @relation(fields: [ID_SERVICO], references: [ID_SERVICO])
-  QTD_BANHOS    Int      @default(0)
+  SERVICO       SERVICOS  @relation(fields: [ID_SERVICO], references: [ID_SERVICO])
+  QTD_BANHOS    Int       @default(0)
   // --- Campos de rastreamento com prioridade para uso offline ---
-  PUBLIC_ID   String    @unique @default(uuid())
-  CREATED_AT  DateTime  @default(now())
-  UPDATED_AT  DateTime  @updatedAt
-  DELETED_AT  DateTime?
-  VERSION     Int       @default(1)
+  PUBLIC_ID     String    @unique @default(uuid())
+  CREATED_AT    DateTime  @default(now())
+  UPDATED_AT    DateTime  @updatedAt
+  DELETED_AT    DateTime?
+  VERSION       Int       @default(1)
 
   @@index([UPDATED_AT])
 }
@@ -113,26 +121,27 @@ model SERVICOS {
   ATENDIMENTOS ATENDIMENTOS[] // um serviço pode ter vários atendimentos (back-relation para ATENDIMENTOS.SERVICO)
   PACOTES      PACOTES[] // um serviço pode estar em vários pacotes (back-relation para PACOTES.SERVICO)
   // --- Campos de rastreamento com prioridade para uso offline ---
-  PUBLIC_ID   String    @unique @default(uuid())
-  CREATED_AT  DateTime  @default(now())
-  UPDATED_AT  DateTime  @updatedAt
-  DELETED_AT  DateTime?
-  VERSION     Int       @default(1)
+  PUBLIC_ID    String         @unique @default(uuid())
+  CREATED_AT   DateTime       @default(now())
+  UPDATED_AT   DateTime       @updatedAt
+  DELETED_AT   DateTime?
+  VERSION      Int            @default(1)
 
   @@index([UPDATED_AT])
 }
 
 model USUARIOS {
-  ID_USUARIO Int     @id @default(autoincrement())
-  NOME       String  @db.VarChar(100)
+  ID_USUARIO Int       @id @default(autoincrement())
+  NOME       String    @db.VarChar(100)
   DESCRICAO  String?
-  SENHA_HASH String  @db.VarChar(255)
+  EMAIL      String    @unique @db.VarChar(150)
+  SENHA_HASH String    @db.VarChar(255)
   // --- Campos de rastreamento com prioridade para uso offline ---
-  PUBLIC_ID   String    @unique @default(uuid())
-  CREATED_AT  DateTime  @default(now())
-  UPDATED_AT  DateTime  @updatedAt
-  DELETED_AT  DateTime?
-  VERSION     Int       @default(1)
+  PUBLIC_ID  String    @unique @default(uuid())
+  CREATED_AT DateTime  @default(now())
+  UPDATED_AT DateTime  @updatedAt
+  DELETED_AT DateTime?
+  VERSION    Int       @default(1)
 
   @@index([UPDATED_AT])
 }
