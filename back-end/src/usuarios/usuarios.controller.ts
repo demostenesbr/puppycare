@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, Param, Query, Patch, Delete, ParseIntPipe 
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { LoginDto } from './dto/create-usuario.dto';
 
 // Local DTO used for batch sync requests to avoid missing module import.
 // Adjust the shape below to match the real payload expected by the service.
@@ -20,7 +21,7 @@ export class UsuariosController {
   @ApiOperation({ summary: 'Autenticar usuário e retornar JWT por EMAIL' })
   @ApiResponse({ status: 200, description: 'Login realizado com sucesso.' })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas.' })
-  async login(@Body() body: { email: string; senha: string }) {
+  async login(@Body() body: LoginDto) {
     return this.usuariosService.login(body.email, body.senha);
   }
 
@@ -58,3 +59,4 @@ findAll() {
     return this.usuariosService.softDeleteByPublicId(publicId);
   }
 }
+
