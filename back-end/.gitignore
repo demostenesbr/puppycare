@@ -1,17 +1,3 @@
 node_modules
 
 /generated/prisma
-
-# Build outputs
-/dist/
-/coverage/
-/tsconfig.build.tsbuildinfo
-
-# Environment files
-/.env
-/.env.local
-/.env.*.local
-
-# Logs and OS junk
-*.log
-.DS_Store

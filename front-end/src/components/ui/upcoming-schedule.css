@@ -1,0 +1,238 @@
+/* From Uiverse.io by juyi_2230 */
+.meeting-card {
+  background-color: #e9eeea;
+  border-radius: 2rem;
+  padding: 1.85rem;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  /* justify-items: center; */
+  margin: auto;
+  /* justify-self: center; */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.85rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.date-selector {
+  background-color: #e9eeea;
+  border-radius: 9999px;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  border: 1px solid #d0d0ce;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.date-selector:hover {
+  background-color: #cfcfcf;
+}
+
+.date-selector span {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.calls-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.calls-info span {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.date-nav-and-indicators {
+  position: relative;
+}
+
+.date-nav-container {
+  background-color: white;
+  border-radius: 16px;
+  padding: 12px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.day-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.day-number,
+.day-name {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.day-number {
+  font-size: 1.2rem;
+  font-weight: 600;
+  height: 28px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding-top: 5px;
+}
+
+.day-name {
+  font-size: 0.7rem;
+  height: 20px;
+  color: #666;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+
+.day-active .day-number,
+.day-active .day-name {
+  background-color: #f0ff7a;
+}
+
+.day-item:hover .day-number,
+.day-item:hover .day-name {
+  background-color: #cfcfcf;
+  cursor: pointer;
+
+}
+
+
+.indicator-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  padding: 0 60px;
+  box-sizing: border-box;
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #d0d0ce;
+  position: relative;
+  z-index: 2;
+}
+
+.indicator-active {
+  background-color: #000;
+}
+
+.indicator-line {
+  position: absolute;
+  top: 50%;
+  left: 32px;
+  right: 32px;
+  height: 1px;
+  border-top: 1.5px dashed #d0d0ce;
+  z-index: 1;
+}
+
+@media screen and (max-width: 480px) {
+  .meeting-card {
+    max-width: 100%;
+    padding: 1rem;
+    border-radius: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .date-selector {
+    padding: 0.5rem 0.8rem;
+  }
+
+  .date-selector span {
+    font-size: 0.9rem;
+  }
+
+  .day-number,
+  .day-name {
+    width: 36px;
+  }
+
+  .day-number {
+    font-size: 1rem;
+  }
+
+  .day-name {
+    font-size: 0.65rem;
+  }
+
+  .indicator-container {
+    padding: 0 24px;
+  }
+
+  .indicator-line {
+    left: 28px;
+    right: 28px;
+  }
+
+  .calls-info span {
+    font-size: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .meeting-card {
+    padding: 0.8rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .date-selector {
+    margin-top: 0.5rem;
+  }
+
+  .day-number,
+  .day-name {
+    width: 30px;
+  }
+
+  .day-number {
+    font-size: 0.9rem;
+  }
+
+  .day-name {
+    font-size: 0.6rem;
+  }
+
+  .indicator-container {
+    padding: 0 20px;
+  }
+
+  .indicator-line {
+    left: 24px;
+    right: 24px;
+  }
+}
