@@ -16,6 +16,11 @@ export class UsuarioSyncItemDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
+  EMAIL?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   DESCRICAO?: string | null;
 
   @ApiProperty({ required: false })

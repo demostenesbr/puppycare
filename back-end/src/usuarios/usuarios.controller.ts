@@ -17,12 +17,12 @@ export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'Autenticar usuário e retornar JWT' })
+  @ApiOperation({ summary: 'Autenticar usuário e retornar JWT por EMAIL' })
   @ApiResponse({ status: 200, description: 'Login realizado com sucesso.' })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas.' })
-async login(@Body() body: { nome: string; senha: string }) {
-  return this.usuariosService.login(body.nome, body.senha);
-}
+  async login(@Body() body: { email: string; senha: string }) {
+    return this.usuariosService.login(body.email, body.senha);
+  }
 
 @Get()
 @ApiOperation({ summary: 'Listar todos os usuários' })
