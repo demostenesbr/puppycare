@@ -10,17 +10,13 @@ export class CreateUsuarioDto {
   @IsString()
   NOME: string;
 
-  @ApiProperty({ description: 'E-mail do usuário', example: 'admin@exemplo.com' })
-  @IsString()
-  EMAIL: string;
-
   @ApiPropertyOptional({ description: 'Descrição/cargo do usuário' })
   @IsOptional()
   @IsString()
   DESCRICAO?: string;
 
-  @ApiProperty({ description: 'Senha (texto puro, será hasheada)', example: 'minhasenha123' })
+  @ApiProperty({ description: 'Senha (hash)', example: 'hash_bcrypt_aqui' })
   @IsString()
   @MinLength(6)
-  SENHA: string;
+  SENHA_HASH: string;
 }
