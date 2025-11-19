@@ -10,6 +10,10 @@ export class CreateUsuarioDto {
   @IsString()
   NOME: string;
 
+  @ApiProperty({ description: 'E-mail do usuário', example: 'admin@exemplo.com' })
+  @IsString()
+  EMAIL: string;
+
   @ApiPropertyOptional({ description: 'Descrição/cargo do usuário' })
   @IsOptional()
   @IsString()
